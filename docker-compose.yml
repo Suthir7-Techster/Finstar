@@ -1,0 +1,27 @@
+services:
+  # One-shot FEG training run: generates data, trains under fairness gates,
+  # registers the model and writes the audit trail into the shared volume.
+  trainer:
+    build: .
+    command: >
+      sh -c "feg train --artifacts-dir /home/feg/artifacts
+             && feg monitor --artifacts-dir /home/feg/artifacts
+             && feg audit-verify --artifacts-dir /home/feg/artifacts"
+    volumes:
+      - feg-artifacts:/home/feg/artifacts
+
+  # Decision API; waits for the trainer to register a model.
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      FEG_ARTIFACTS_DIR: /home/feg/artifacts
+    volumes:
+      - feg-artifacts:/home/feg/artifacts
+    depends_on:
+      trainer:
+        condition: service_completed_successfully
+
+volumes:
+  feg-artifacts:
