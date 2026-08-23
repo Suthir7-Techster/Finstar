@@ -1,0 +1,20 @@
+# Fairness policy — enforced as hard gates in the training pipeline and in CI.
+# Thresholds follow the four-fifths (80%) rule used by US EEOC guidance and
+# common financial-services fairness guidance; they are configurable policy,
+# not code constants.
+protected_attribute: age_band
+privileged_group: "35_plus"
+unprivileged_group: "under_35"
+
+gates:
+  # A gate failure blocks model registration and fails the pipeline (exit 1).
+  disparate_impact_min: 0.80
+  statistical_parity_abs_max: 0.10
+  equal_opportunity_abs_max: 0.10
+  min_subgroup_recall: 0.55
+  min_subgroup_count: 100
+
+mitigation:
+  # Applied automatically when the unmitigated candidate fails a gate.
+  reweighing: true
+  group_threshold_optimization: true   # post-processing fallback for residual gaps

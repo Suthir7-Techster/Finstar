@@ -1,0 +1,40 @@
+# Synthetic KYC data generation policy.
+# The generator is seeded and fully deterministic; bias injection parameters are
+# explicit and documented because they define the fairness demonstration scenario.
+data:
+  seed: 20250823
+  n_train: 10000
+  n_eval: 2000
+  n_monitor_window: 1500
+  protected_attribute: age_band            # derived from age; never used as a model feature
+  privileged_group: "35_plus"
+  unprivileged_group: "under_35"
+  unprivileged_share: 0.40                 # representation of the unprivileged group
+  bias:
+    # Historical label bias: probability that a *good* outcome is flipped to
+    # *bad* for unprivileged applicants in the training labels (the bias the
+    # fairness tooling must detect and mitigate).
+    label_flip_good_to_bad_unprivileged: 0.15
+    label_flip_good_to_bad_privileged: 0.01
+    # Proxy pressure: features correlated with the protected attribute.
+    credit_history_gap_months: 12          # extra history deficit from historical discrimination
+
+quality:
+  max_null_fraction: 0.02
+  max_duplicate_fraction: 0.01
+  min_class_share: 0.05
+  min_group_share: 0.10
+  min_rows: 500
+
+drift_scenarios:
+  # Used by `feg monitor` to simulate production windows.
+  mild:
+    income_shift_log: 0.05
+    utilization_add: 0.03
+    unprivileged_share: 0.44
+  severe:
+    income_shift_log: 0.18
+    utilization_add: 0.12
+    unprivileged_share: 0.52
+    # Degrading decision quality for the unprivileged group in the window.
+    label_flip_good_to_bad_unprivileged: 0.30

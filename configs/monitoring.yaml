@@ -1,0 +1,22 @@
+# Monitoring policy — applied by `feg monitor` to production windows.
+drift:
+  psi:
+    warning: 0.10
+    critical: 0.25
+  js_divergence:
+    warning: 0.02
+    critical: 0.10
+  ks:
+    warning: 0.10
+    critical: 0.20
+
+fairness_drift:
+  # Delta of each fairness metric vs the registered reference window.
+  disparate_impact_abs_drop_warning: 0.05
+  disparate_impact_abs_drop_critical: 0.10
+  statistical_parity_abs_delta_warning: 0.05
+  statistical_parity_abs_delta_critical: 0.10
+
+alerts:
+  # Number of drifting features required before raising a dataset-level alert.
+  min_features_for_dataset_alert: 3

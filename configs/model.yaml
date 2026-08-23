@@ -1,0 +1,25 @@
+# Model training and decision policy.
+models:
+  logistic_regression:
+    C: 0.8
+    max_iter: 2000
+    calibrate: true
+  gradient_boosting:
+    learning_rate: 0.06
+    max_iter: 300
+    max_depth: 4
+    early_stopping: true
+
+selection:
+  # A model is only promotable if AUC >= floor AND it passes all fairness gates.
+  min_auc: 0.68
+  # Operating threshold chosen on a validation split to maximize balanced accuracy.
+  threshold_objective: balanced_accuracy
+
+decisions:
+  # Risk-score banding applied at serving time. `refer` routes the applicant to
+  # the human review queue (human-in-the-loop, paper recommendation 6.3).
+  approve_below: 0.35
+  refer_between: [0.35, 0.60]   # scores in [low, high) are referred
+  decline_above: 0.60
+  max_reason_codes: 3
