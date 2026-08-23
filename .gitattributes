@@ -1,0 +1,4 @@
+# Normalize line endings: LF in the repo, LF on checkout for source files.
+* text=auto eol=lf
+*.png binary
+*.joblib binary
