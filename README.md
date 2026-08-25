@@ -1,4 +1,4 @@
-# feg-mlops
+# Finstar
 
 **An executable reference implementation of the Fairness–Explainability–Governance (FEG)
 framework for responsible KYC/FinTech decisioning.**
